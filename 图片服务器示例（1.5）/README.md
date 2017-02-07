@@ -19,4 +19,7 @@
 	|——startHanler.js 业务模块
 	|——uploadHandler.js 业务模块
 
+**http服务器商业模式**
+
+
 ![http服务端编码欠图](./http.jpg)
