@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=620">
+    <title>图片上传</title>
+    <link rel="stylesheet" href="/stylesheets/upload.css">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div style="margin:50px auto;width: 900px;">
+    <div class="panel panel-default">
+        <div class="panel-heading" style="height: 40px;">
+            <div style="text-align: left">
+                <span style="font-size:20px; font-weight:bold;">图片描述：</span><input id="desc" type="text" style="border: 1px solid #ccc;" placeholder="桂林7日游">
+                <div style="float: right;">
+                    <a class="btn  btn-xs btn-success" onclick="upload()" style="margin-right: 35px;">点击上传</a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+          <article>
+              <div id="holder">
+                <input type="text" placeholder="拖拽图片到此" style="font-size:30px; font-weight:bold; border: 0px;" >
+              </div>
+              <p id="upload" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
+              <p id="filereader">File API &amp; FileReader API not supported</p>
+              <p id="formdata">XHR2's FormData is not supported</p>
+              <p id="progress">XHR2's upload progress isn't supported</p>
+              <p>Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">100</progress></p>
+          </article>
+        </div>
+    </div>
+</div>
+<script>
+    var fileItems = [];
+    var holder = document.getElementById('holder'),
+        tests = {
+            filereader: typeof FileReader != 'undefined',
+            dnd: 'draggable' in document.createElement('span'),
+            formdata: !!window.FormData,
+            progress: "upload" in new XMLHttpRequest
+        },
+        support = {
+            filereader: document.getElementById('filereader'),
+            formdata: document.getElementById('formdata'),
+            progress: document.getElementById('progress')
+        },
+        acceptedTypes = {
+            'image/png': true,
+            'image/jpeg': true,
+            'image/gif': true
+        },
+        progress = document.getElementById('uploadprogress'),
+        fileupload = document.getElementById('upload');
+
+    "filereader formdata progress".split(' ').forEach(function(api) {
+        if (tests[api] === false) {
+            support[api].className = 'fail';
+        } else {
+            // FFS. I could have done el.hidden = true, but IE doesn't support
+            // hidden, so I tried to create a polyfill that would extend the
+            // Element.prototype, but then IE10 doesn't even give me access
+            // to the Element object. Brilliant.
+            support[api].className = 'hidden';
+        }
+    });
+
+    function previewfile(file) {
+        // file= file[0];
+        if (tests.filereader === true && acceptedTypes[file.type] === true) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var image = new Image();
+                image.src = event.target.result;
+                image.width = 250; // a fake resize
+                holder.appendChild(image);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            holder.innerHTML += '<p>Uploaded ' + file.name + ' ' + (file.size ? (file.size / 1024 | 0) + 'K' : '');
+            console.log(file);
+        }
+    }
+
+    function readfiles(files) {
+        // debugger;
+        var formData = tests.formdata ? new FormData() : null;
+        for (var i = 0; i < files.length; i++) {
+            if (tests.formdata) formData.append('file', files[i]);
+            // previewfile(files[i]);
+        }
+
+        // now post a new XHR request
+        if (tests.formdata) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload');
+            xhr.onload = function() {
+                progress.value = progress.innerHTML = 100;
+                location.href = '/home';
+            };
+
+            if (tests.progress) {
+                xhr.upload.onprogress = function(event) {
+                    if (event.lengthComputable) {
+                        var complete = (event.loaded / event.total * 100 | 0);
+                        progress.value = progress.innerHTML = complete;
+                    }
+                }
+            }
+            var desc = document.getElementById('desc').value;
+            formData.append('desc', desc);
+            xhr.send(formData);
+        }
+    }
+
+    if (tests.dnd) {
+        holder.ondragover = function() {
+            this.className = 'hover';
+            return false;
+        };
+        holder.ondragend = function() {
+            this.className = '';
+            return false;
+        };
+        holder.ondrop = function(e) {
+            this.className = '';
+            e.preventDefault();
+            // readfiles(e.dataTransfer.files);
+            fileItems = e.dataTransfer.files;
+            viewHolder(fileItems);
+        }
+    } else {
+        fileupload.className = 'hidden';
+        fileupload.querySelector('input').onchange = function() {
+            // readfiles(this.files);
+            console.log(fileItems);
+            fileItems = this.files;
+            viewHolder(fileItems);
+        };
+    }
+
+    function viewHolder(files){
+      while(holder.hasChildNodes()){
+        holder.removeChild(holder.firstChild);
+      }
+      for(var i=0; i<files.length; i++){
+        previewfile(files[i]);
+      }
+    }
+    function upload(){
+      readfiles(fileItems);
+    }
+</script>
+</body>
+
+</html>

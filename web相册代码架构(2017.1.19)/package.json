@@ -1,0 +1,22 @@
+{
+  "name": "yao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "body-parser": "^1.16.0",
+    "cheerio": "^0.22.0",
+    "ejs": "^2.5.5",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "mongoose": "^4.7.7",
+    "multer": "^1.2.1",
+    "request": "^2.79.0"
+  }
+}
