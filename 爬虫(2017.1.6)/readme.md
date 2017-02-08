@@ -10,5 +10,5 @@
 		|——xiaoshuo.txt 爬取的小说
 		|——images/ 爬取的美女图片
 
-1.进入examples中,运行`npm install`
+1. 进入examples中,运行`npm install`
 2. 运行`node crawler`
