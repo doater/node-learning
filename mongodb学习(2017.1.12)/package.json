@@ -1,0 +1,18 @@
+{
+  "name": "yao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cheerio": "^0.22.0",
+    "iconv-lite": "^0.4.15",
+    "mkdirp": "^0.5.1",
+    "mongoose": "^4.7.6",
+    "request": "^2.79.0"
+  }
+}
