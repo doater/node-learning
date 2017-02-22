@@ -1,0 +1,11 @@
+<%- include('header')%>
+    <!-- <h1><%= "<h1>hello</h1>" %></h1> -->
+    <h1><%= name %></h1>
+    <p><%- name%>,Hello</p>
+    <p><%- "<h1>hello</h1>"%></p>
+    <ul>
+      <% for(var i in servers){%>
+        <li><%= servers[i] %></li>
+      <% } %>
+    </ul>
+<%- include('footer')%>
